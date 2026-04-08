@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -28,13 +28,50 @@ const doctorTIcon = new L.DivIcon({
   iconAnchor: [60, 60],
 });
 
-// Map Updater Component
-function MapUpdater({ center }: { center: [number, number] }) {
+// Animated Marker Component that also scrolls the map
+function AnimatedMarker({ targetCoords, icon, children, duration = 800 }: { targetCoords: [number, number], icon: any, children?: React.ReactNode, duration?: number }) {
+  const [displayCoords, setDisplayCoords] = useState<[number, number]>(targetCoords);
+  const displayCoordsRef = useRef<[number, number]>(targetCoords);
   const map = useMap();
+
   useEffect(() => {
-    map.setView(center, map.getZoom(), { animate: true });
-  }, [center, map]);
-  return null;
+    const startCoords = displayCoordsRef.current;
+    if (startCoords[0] === targetCoords[0] && startCoords[1] === targetCoords[1]) return;
+
+    let animationFrameId: number;
+    const startTime = performance.now();
+
+    const step = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Smooth easing (easeInOutQuad)
+      const easeProgress = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
+
+      const nextLat = startCoords[0] + (targetCoords[0] - startCoords[0]) * easeProgress;
+      const nextLng = startCoords[1] + (targetCoords[1] - startCoords[1]) * easeProgress;
+      
+      const newCoords: [number, number] = [nextLat, nextLng];
+      setDisplayCoords(newCoords);
+      displayCoordsRef.current = newCoords;
+      
+      // Update map view to follow the marker
+      map.setView(newCoords, map.getZoom(), { animate: false });
+
+      if (progress < 1) {
+        animationFrameId = requestAnimationFrame(step);
+      }
+    };
+
+    animationFrameId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [targetCoords, map, duration]);
+
+  return (
+    <Marker position={displayCoords} icon={icon}>
+      {children}
+    </Marker>
+  );
 }
 
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -73,23 +110,34 @@ const App: React.FC = () => {
   const [auIdx, setAuIdx] = useState(0);
   const [attempts, setAttempts] = useState(0);
   const [routeIdx, setRouteIdx] = useState(0);
+  const [targetRouteIdx, setTargetRouteIdx] = useState(0);
   const [consecutiveWrongs, setConsecutiveWrongs] = useState(0);
   const [showFeedback, setShowFeedback] = useState<'correct' | 'incorrect' | 'back' | 'bonus' | null>(null);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
 
   const routePoints = data.route;
 
-  // Animation effect for moving back
+  // Effect to move routeIdx towards targetRouteIdx step by step
   useEffect(() => {
-    if (gameState === 'moving_back' && routeIdx > 0) {
-      const timer = setTimeout(() => {
-        setRouteIdx(prev => prev - 1);
-      }, 500);
-      return () => clearTimeout(timer);
-    } else if (gameState === 'moving_back' && routeIdx === 0) {
-      setGameState('finished');
+    if (routeIdx === targetRouteIdx) {
+      if (routeIdx === routePoints.length - 1 && gameState === 'playing') {
+        setGameState('special');
+      }
+      if (gameState === 'moving_back' && routeIdx === 0) {
+        setGameState('finished');
+      }
+      return;
     }
-  }, [gameState, routeIdx]);
+
+    const direction = targetRouteIdx > routeIdx ? 1 : -1;
+    const interval = gameState === 'moving_back' ? 400 : 900;
+
+    const timer = setTimeout(() => {
+      setRouteIdx(prev => prev + direction);
+    }, interval);
+    
+    return () => clearTimeout(timer);
+  }, [routeIdx, targetRouteIdx, gameState, routePoints.length]);
 
   // Interleaving logic: 3 Swiss, 1 Australian
   const isAuQuestion = (attempts > 0 && (attempts + 1) % 4 === 0);
@@ -126,47 +174,37 @@ const App: React.FC = () => {
       }
     }
 
+    let nextFeedback: 'correct' | 'incorrect' | 'back' | 'bonus' | null = null;
     if (isAuQuestion) {
-      if (isCorrect) {
-        setShowFeedback('bonus');
-      } else {
-        setShowFeedback('incorrect');
-      }
+      nextFeedback = isCorrect ? 'bonus' : 'incorrect';
     } else {
       if (isCorrect) {
-        setShowFeedback('correct');
+        nextFeedback = 'correct';
         setConsecutiveWrongs(0);
       } else {
         const nextWrongs = consecutiveWrongs + 1;
         if (nextWrongs >= 2) {
-          setShowFeedback('back');
+          nextFeedback = 'back';
           setConsecutiveWrongs(0);
         } else {
-          setShowFeedback('incorrect');
+          nextFeedback = 'incorrect';
           setConsecutiveWrongs(nextWrongs);
         }
       }
     }
+    setShowFeedback(nextFeedback);
+
+    // Trigger movement immediately with the sound
+    if (isCorrect) {
+      const moveAmount = isAuQuestion ? 2 : 1;
+      setTargetRouteIdx(prev => Math.min(prev + moveAmount, routePoints.length - 1));
+    } else if (nextFeedback === 'back') {
+      setTargetRouteIdx(prev => Math.max(prev - 1, 0));
+    }
 
     setTimeout(() => {
-      const wasBack = !isAuQuestion && (showFeedback === 'back' || (optionIdx !== currentQuestion.answer && consecutiveWrongs + 1 >= 2));
-      
       setShowFeedback(null);
       setSelectedOption(null);
-      
-      if (isCorrect) {
-        const moveAmount = isAuQuestion ? 2 : 1;
-        if (routeIdx + moveAmount < routePoints.length - 1) {
-          setRouteIdx(r => r + moveAmount);
-        } else {
-          setRouteIdx(routePoints.length - 1);
-          setGameState('special');
-        }
-      } else if (wasBack) {
-        if (routeIdx > 0) {
-          setRouteIdx(r => r - 1);
-        }
-      }
       
       if (isAuQuestion) {
         setAuIdx(i => i + 1);
@@ -181,6 +219,7 @@ const App: React.FC = () => {
     setTimeout(() => {
       setSelectedOption(null);
       setGameState('moving_back');
+      setTargetRouteIdx(0);
     }, 1000);
   };
 
@@ -191,6 +230,7 @@ const App: React.FC = () => {
     setAuIdx(0);
     setAttempts(0);
     setRouteIdx(0);
+    setTargetRouteIdx(0);
     setConsecutiveWrongs(0);
     setGameState('playing');
   };
@@ -392,15 +432,18 @@ const App: React.FC = () => {
             opacity={0.6}
             dashArray="10, 10"
           />
-          <Marker position={currentCoords} icon={doctorTIcon}>
+          <AnimatedMarker 
+            targetCoords={currentCoords} 
+            icon={doctorTIcon} 
+            duration={gameState === 'moving_back' ? 350 : 800}
+          >
             <Popup>
               <div className="text-center font-bold">
                 Doctor T auf der Tour!<br />
                 📍 {routePoints[routeIdx].name}
               </div>
             </Popup>
-          </Marker>
-          <MapUpdater center={currentCoords} />
+          </AnimatedMarker>
         </MapContainer>
 
         {/* Feedback Overlay */}
