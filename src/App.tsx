@@ -173,9 +173,12 @@ const App: React.FC = () => {
 
   const routePoints = data.route;
 
+  const isMovingRef = useRef(false);
+
   // Effect to move routeIdx towards targetRouteIdx step by step
   useEffect(() => {
     if (routeIdx === targetRouteIdx) {
+      isMovingRef.current = false;
       if (routeIdx === routePoints.length - 1 && gameState === 'playing') {
         setGameState('special');
       }
@@ -186,7 +189,13 @@ const App: React.FC = () => {
     }
 
     const direction = targetRouteIdx > routeIdx ? 1 : -1;
-    const interval = gameState === 'moving_back' ? 400 : 4200;
+    
+    // Start first step quickly, subsequent steps wait for animation
+    let interval = gameState === 'moving_back' ? 400 : 4200;
+    if (!isMovingRef.current) {
+      interval = gameState === 'moving_back' ? 0 : 500;
+      isMovingRef.current = true;
+    }
 
     const timer = setTimeout(() => {
       setRouteIdx(prev => prev + direction);
