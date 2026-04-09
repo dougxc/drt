@@ -373,8 +373,8 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-gray-100 flex flex-col md:flex-row md:h-screen md:overflow-hidden">
       {/* Quiz Section */}
       <div className="w-full h-[60vh] md:h-auto md:w-1/3 p-6 flex flex-col justify-between overflow-y-auto bg-white shadow-2xl z-10">
-        <div>
-          <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col h-full">
+          <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               {gameState === 'special' ? <Trophy className="text-yellow-600 w-6 h-6" /> : (isAuQuestion ? <Globe className="text-blue-600 w-6 h-6" /> : <Flag className="text-red-600 w-6 h-6" />)}
               <span className="font-bold text-gray-500 uppercase tracking-widest text-sm">
@@ -386,14 +386,14 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             <h2 className="text-2xl font-black text-gray-900 leading-tight">
               {gameState === 'special' 
                 ? "Have you provided Doug yet with a date for the bike tour?"
                 : (gameState === 'moving_back' ? "Moment mal..." : currentQuestion.question)}
             </h2>
             
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               {gameState === 'special' ? (
                 ["No, I forgot", "No, it's a very complex decision - I need more time", "No, Doug should pick a random date"].map((option, idx) => (
                   <button
@@ -406,7 +406,7 @@ const App: React.FC = () => {
                       <span className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-sm font-bold text-gray-400">
                         {String.fromCharCode(65 + idx)}
                       </span>
-                      <span className="flex-1 font-semibold text-gray-700">{option}</span>
+                      <span className="flex-1 font-semibold text-gray-700 text-sm">{option}</span>
                     </div>
                   </button>
                 ))
@@ -434,7 +434,7 @@ const App: React.FC = () => {
                         <span className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-sm font-bold text-gray-400 group-hover:border-red-600 group-hover:text-red-600">
                           {String.fromCharCode(65 + idx)}
                         </span>
-                        <span className="flex-1 font-semibold text-gray-700">{option}</span>
+                        <span className="flex-1 font-semibold text-gray-700 text-sm">{option}</span>
                       </div>
                     </button>
                   ))
@@ -444,8 +444,8 @@ const App: React.FC = () => {
           </div>
           
           {/* Location Image */}
-          <div className="mt-8">
-            <div className="swiss-card overflow-hidden h-48 border-t-0 border-b-8 border-swiss-red shadow-lg group">
+          <div className="mt-6 flex-1 min-h-0">
+            <div className="swiss-card overflow-hidden h-full border-t-0 border-b-8 border-swiss-red shadow-lg group">
               <img 
                 src={locationImages[routePoints[routeIdx].name] || locationImages["Scuol"]} 
                 alt={routePoints[routeIdx].name}
@@ -461,7 +461,7 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-gray-100">
+        <div className="mt-6 pt-4 border-t border-gray-100">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-gray-400 uppercase font-bold tracking-widest">Fortschritt</p>
