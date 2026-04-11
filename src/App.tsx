@@ -516,9 +516,9 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col md:flex-row md:h-screen md:overflow-hidden">
+    <div className="min-h-screen bg-gray-100 flex flex-col md:flex-row md:h-screen md:overflow-hidden landscape:flex-row landscape:h-screen landscape:overflow-hidden">
       {/* Quiz Section */}
-      <div className="w-full h-[60vh] md:h-auto md:w-1/3 p-6 flex flex-col justify-between overflow-y-auto bg-white shadow-2xl z-10">
+      <div className="w-full h-[60vh] md:h-auto md:w-1/3 landscape:w-1/3 landscape:h-auto p-6 flex flex-col justify-between overflow-y-auto bg-white shadow-2xl z-10">
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
@@ -627,7 +627,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Map Section */}
-      <div className="w-full h-[40vh] md:h-auto md:flex-1 relative z-0">
+      <div className="w-full h-[40vh] md:h-auto md:flex-1 landscape:flex-1 landscape:h-auto relative z-0">
         <MapContainer 
           center={currentCoords} 
           zoom={12} 
