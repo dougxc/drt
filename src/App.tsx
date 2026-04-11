@@ -66,6 +66,131 @@ const waterIcon = new L.DivIcon({
   iconAnchor: [16, 16],
 });
 
+type Language = 'de' | 'fr' | 'it' | 'rm';
+
+const uiTranslations: Record<Language, any> = {
+  de: {
+    startTitle: "Hoi Doctor T!",
+    startCongrat: "Herzliche Gratulation zum 60. Geburtstag!",
+    startDesc: "Bist du bereit für deine Nationalpark-Tour? Beweise deine Schweizer-Kenntnisse (und ein bisschen Aussie-Wissen), um ans Ziel zu kommen!",
+    startButton: "Tour Starten",
+    finishedTitle: "Gratulation, Doctor T!",
+    finishedDesc: "Du hast die Tour geschafft und bist ein wahrer Kenner der Schweiz (und Australien)!",
+    questionsNeeded: "Benötigte Fragen",
+    playAgain: "Nochmals spielen",
+    giftDesc: "\"Dein Geschenk wartet: Eine Bike-Tour rund um den Schweizer Nationalpark!\"",
+    tourQuestions: "Tour-Fragen",
+    aussieBonus: "Aussie Bonus!",
+    lastHurdle: "Letzte Hürde!",
+    unmute: "Stummschaltung aufheben",
+    mute: "Stummschalten",
+    goalReached: "Ziel erreicht!",
+    gday: "G'day Doctor T!",
+    tourTitle: "Doctor T's Tour",
+    specialQuestion: "Hast du Doug schon ein Datum für die Bike-Tour genannt?",
+    specialOptions: ["Nein, ich habe es vergessen", "Nein, es ist eine sehr komplexe Entscheidung - ich brauche mehr Zeit", "Nein, Doug soll ein zufälliges Datum wählen"],
+    momentMal: "Moment mal...",
+    wrongAnswerBack: "Falsche Antwort! Du musst zurück zum Start und nochmals über das Datum nachdenken! 😂",
+    currentLocation: "Aktueller Standort",
+    progress: "Fortschritt",
+    questions: "Fragen",
+    correct: "Richtig! ✅",
+    bonus: "Crikey! +2 Felder! 🇦🇺🚀",
+    back: "Oje! Zurück... ↩️",
+    hoppla: "Hoppla! ❌"
+  },
+  fr: {
+    startTitle: "Salut Doctor T !",
+    startCongrat: "Joyeux 60ème anniversaire !",
+    startDesc: "Es-tu prêt pour ton tour du Parc National ? Prouve tes connaissances sur la Suisse (et un peu sur l'Australie) pour atteindre l'objectif !",
+    startButton: "Commencer le tour",
+    finishedTitle: "Félicitations, Doctor T !",
+    finishedDesc: "Tu as terminé le tour et tu es un vrai connaisseur de la Suisse (et de l'Australie) !",
+    questionsNeeded: "Questions nécessaires",
+    playAgain: "Rejouer",
+    giftDesc: "\"Ton cadeau t'attend : Un tour à vélo autour du Parc National Suisse !\"",
+    tourQuestions: "Questions du tour",
+    aussieBonus: "Bonus Australien !",
+    lastHurdle: "Dernier obstacle !",
+    unmute: "Activer le son",
+    mute: "Couper le son",
+    goalReached: "Objectif atteint !",
+    gday: "G'day Doctor T !",
+    tourTitle: "Le tour de Doctor T",
+    specialQuestion: "As-tu déjà donné une date à Doug pour le tour à vélo ?",
+    specialOptions: ["Non, j'ai oublié", "Non, c'est une décision très complexe - j'ai besoin de plus de temps", "Non, Doug devrait choisir une date au hasard"],
+    momentMal: "Attends une minute...",
+    wrongAnswerBack: "Mauvaise response ! Tu dois retourner au départ et réfléchir à nouveau à la date ! 😂",
+    currentLocation: "Position actuelle",
+    progress: "Progression",
+    questions: "Questions",
+    correct: "Correct ! ✅",
+    bonus: "Crikey ! +2 cases ! 🇦🇺🚀",
+    back: "Oups ! En arrière... ↩️",
+    hoppla: "Oups ! ❌"
+  },
+  it: {
+    startTitle: "Ciao Doctor T!",
+    startCongrat: "Buon 60° compleanno!",
+    startDesc: "Sei pronto per il tuo tour del Parco Nazionale? Dimostra le tue conoscenze sulla Svizzera (e un po' sull'Australia) per raggiungere l'obiettivo!",
+    startButton: "Inizia il tour",
+    finishedTitle: "Congratulazioni, Doctor T!",
+    finishedDesc: "Hai completato il tour e sei un vero conoscitore della Svizzera (e dell'Australia)!",
+    questionsNeeded: "Domande necessarie",
+    playAgain: "Gioca ancora",
+    giftDesc: "\"Il tuo regalo ti aspetta: Un tour in bicicletta intorno al Parco Nazionale Svizzero!\"",
+    tourQuestions: "Domande del tour",
+    aussieBonus: "Bonus Australiano!",
+    lastHurdle: "Ultimo ostacolo!",
+    unmute: "Riattiva l'audio",
+    mute: "Disattiva l'audio",
+    goalReached: "Obiettivo raggiunto!",
+    gday: "G'day Doctor T!",
+    tourTitle: "Il tour di Doctor T",
+    specialQuestion: "Hai già dato a Doug una data per il tour in bici?",
+    specialOptions: ["No, ho dimenticato", "No, è una decisione molto complessa - ho bisogno di più tempo", "No, Doug dovrebbe scegliere una data a caso"],
+    momentMal: "Aspetta un momento...",
+    wrongAnswerBack: "Risposta sbagliata! Devi tornare all'inizio e riflettere di nuovo sulla data! 😂",
+    currentLocation: "Posizione attuale",
+    progress: "Progresso",
+    questions: "Domande",
+    correct: "Esatto! ✅",
+    bonus: "Crikey! +2 caselle! 🇦🇺🚀",
+    back: "Ohi! Indietro... ↩️",
+    hoppla: "Hoppla! ❌"
+  },
+  rm: {
+    startTitle: "Hoi Doctor T!",
+    startCongrat: "Cordiala gratulaziun per il 60avel anniversari!",
+    startDesc: "Es ti pront per tia tura tras il Parc Naziunal? Demustra tias enconuschientschas da la Svizra (ed in pau da l'Australia) per arrivar a la finiva!",
+    startButton: "Cumenzar la tura",
+    finishedTitle: "Gratulaziun, Doctor T!",
+    finishedDesc: "Ti has fatg la tura ed es in vair enconuschider da la Svizra (e da l'Australia)!",
+    questionsNeeded: "Dumondas duvradas",
+    playAgain: "Giugar danovamain",
+    giftDesc: "\"Tes dun t'aspetta: Ina tura cun bike enturn il Parc Naziunal Svizzer!\"",
+    tourQuestions: "Dumondas da la tura",
+    aussieBonus: "Bonus australian!",
+    lastHurdle: "Ultima sventira!",
+    unmute: "Activar il tun",
+    mute: "Deactivar il tun",
+    goalReached: "Finiva cuntanschida!",
+    gday: "G'day Doctor T!",
+    tourTitle: "La tura da Doctor T",
+    specialQuestion: "Has ti gia dà a Doug ina data per la tura cun bike?",
+    specialOptions: ["Na, jau hai smemblidà quai", "Na, quai è ina decisiun fitg cumplexa - jau dore pli bler temp", "Na, Doug duess tscherner ina data casuala"],
+    momentMal: "Spetga in mument...",
+    wrongAnswerBack: "Ina faussa resposta! Ti stos turnar al cumenzament e pensar danovamain davart la data! 😂",
+    currentLocation: "Posiziun actuala",
+    progress: "Progress",
+    questions: "Dumondas",
+    correct: "Gist! ✅",
+    bonus: "Crikey! +2 chomps! 🇦🇺🚀",
+    back: "Ohi! Anavos... ↩️",
+    hoppla: "Hoppla! ❌"
+  }
+};
+
 // Animated Marker Component that also scrolls the map
 function AnimatedMarker({ position, icon, children }: { position: [number, number], icon: any, children?: React.ReactNode }) {
   const map = useMap();
@@ -110,6 +235,7 @@ const locationImages: Record<string, string> = {
 };
 
 const App: React.FC = () => {
+  const [language, setLanguage] = useState<Language>('de');
   const [gameState, setGameState] = useState<'start' | 'playing' | 'special' | 'moving_back' | 'finished'>('start');
   const [shuffledSwiss, setShuffledSwiss] = useState(() => shuffleArray(data.questions));
   const [shuffledAu, setShuffledAu] = useState(() => shuffleArray(auData.questions));
@@ -123,6 +249,8 @@ const App: React.FC = () => {
   const [showFeedback, setShowFeedback] = useState<'correct' | 'incorrect' | 'back' | 'bonus' | null>(null);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isMuted, setIsMuted] = useState(false);
+
+  const t = uiTranslations[language];
 
   const routePoints = data.route.map((p, i) => ({
     ...p,
@@ -179,7 +307,6 @@ const App: React.FC = () => {
     
     // Slow down for the "struggling" effect
     // We want to cover the distance between stages in about 4 seconds
-    // Calculate interval based on number of points in this leg
     const currentTargetStageIdx = direction > 0 
       ? routePoints.findIndex((_, i) => fullPathData.stageIndices[i] > currentPathIdx)
       : routePoints.findLastIndex((_, i) => fullPathData.stageIndices[i] < currentPathIdx);
@@ -200,7 +327,7 @@ const App: React.FC = () => {
 
   // Interleaving logic: 3 Swiss, 1 Australian
   const isAuQuestion = (attempts > 0 && (attempts + 1) % 4 === 0);
-  const currentQuestion = isAuQuestion 
+  const currentQuestion: any = isAuQuestion 
     ? shuffledAu[auIdx % shuffledAu.length] 
     : shuffledSwiss[swissIdx % shuffledSwiss.length];
 
@@ -300,28 +427,50 @@ const App: React.FC = () => {
     setGameState('playing');
   };
 
+  const getLocalizedQuestion = () => {
+    if (gameState === 'moving_back') return t.momentMal;
+    if (gameState === 'special') return t.specialQuestion;
+    return currentQuestion.question[language] || currentQuestion.question['de'];
+  };
+
+  const getLocalizedOptions = () => {
+    if (gameState === 'special') return t.specialOptions;
+    return currentQuestion.options[language] || currentQuestion.options['de'];
+  };
+
   if (gameState === 'start') {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-red-500 to-red-700">
         <div className="swiss-card max-w-lg w-full p-8 text-center space-y-6">
+          <div className="absolute top-4 right-4 flex bg-white/20 rounded-full p-1">
+            {(['de', 'fr', 'it', 'rm'] as const).map(l => (
+              <button
+                key={l}
+                onClick={() => setLanguage(l)}
+                className={`w-8 h-8 rounded-full text-xs font-bold transition-all ${language === l ? 'bg-white shadow-sm text-red-600' : 'text-white/60 hover:text-white'}`}
+              >
+                {l.toUpperCase()}
+              </button>
+            ))}
+          </div>
           <div className="flex justify-center">
             <div className="w-24 h-24 rounded-full border-4 border-red-100 shadow-xl overflow-hidden bg-red-600">
               <img src="doctor_t.jpeg" className="w-full h-full object-cover" />
             </div>
           </div>
           <h1 className="text-4xl font-black text-gray-900 leading-tight">
-            Hoi Doctor T!<br />
-            <span className="text-red-600">Herzliche Gratulation</span><br />
-            zum 60. Geburtstag!
+            {t.startTitle}<br />
+            <span className="text-red-600">{t.startCongrat.split('!')[0]}!</span><br />
+            {t.startCongrat.split('!')[1]}
           </h1>
           <p className="text-lg text-gray-600">
-            Bist du bereit für deine Nationalpark-Tour? Beweise deine Schweizer-Kenntnisse (und ein bisschen Aussie-Wissen), um ans Ziel zu kommen!
+            {t.startDesc}
           </p>
           <button 
             onClick={() => setGameState('playing')}
             className="btn-swiss w-full text-xl py-4 flex items-center justify-center gap-2 group"
           >
-            Tour Starten <ChevronRight className="group-hover:translate-x-1 transition-transform" />
+            {t.startButton} <ChevronRight className="group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       </div>
@@ -341,24 +490,24 @@ const App: React.FC = () => {
             </div>
           </div>
           <h1 className="text-4xl font-black text-gray-900">
-            Gratulation, Doctor T!
+            {t.finishedTitle}
           </h1>
           <p className="text-xl text-gray-600">
-            Du hast die Tour geschafft und bist ein wahrer Kenner der Schweiz (und Australien)!
+            {t.finishedDesc}
           </p>
           <div className="bg-gray-50 p-6 rounded-xl border-2 border-dashed border-gray-200">
-            <p className="text-gray-500 uppercase tracking-widest text-sm font-bold mb-2">Benötigte Fragen</p>
+            <p className="text-gray-500 uppercase tracking-widest text-sm font-bold mb-2">{t.questionsNeeded}</p>
             <p className="text-5xl font-black text-red-600">{attempts}</p>
           </div>
           <div className="space-y-4">
             <p className="italic text-gray-600">
-              "Dein Geschenk wartet: Eine Bike-Tour rund um den Schweizer Nationalpark!"
+              {t.giftDesc}
             </p>
             <button 
               onClick={resetGame}
               className="flex items-center justify-center gap-2 mx-auto text-red-600 font-bold hover:underline"
             >
-              <RefreshCw className="w-4 h-4" /> Nochmals spielen
+              <RefreshCw className="w-4 h-4" /> {t.playAgain}
             </button>
           </div>
         </div>
@@ -375,76 +524,66 @@ const App: React.FC = () => {
             <div className="flex items-center gap-2">
               {gameState === 'special' ? <Trophy className="text-yellow-600 w-6 h-6" /> : (isAuQuestion ? <Globe className="text-blue-600 w-6 h-6" /> : <Flag className="text-red-600 w-6 h-6" />)}
               <span className="font-bold text-gray-500 uppercase tracking-widest text-sm">
-                {gameState === 'special' ? 'Letzte Hürde!' : (isAuQuestion ? 'Aussie Bonus!' : 'Tour-Fragen')}
+                {gameState === 'special' ? t.lastHurdle : (isAuQuestion ? t.aussieBonus : t.tourQuestions)}
               </span>
             </div>
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => setIsMuted(!isMuted)}
                 className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-500"
-                title={isMuted ? "Stummschaltung aufheben" : "Stummschalten"}
+                title={isMuted ? t.unmute : t.mute}
               >
                 {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
               </button>
+              <div className="flex bg-gray-100 rounded-full p-1">
+                {(['de', 'fr', 'it', 'rm'] as const).map(l => (
+                  <button
+                    key={l}
+                    onClick={() => setLanguage(l)}
+                    className={`w-8 h-8 rounded-full text-xs font-bold transition-all ${language === l ? 'bg-white shadow-sm text-red-600' : 'text-gray-400 hover:text-gray-600'}`}
+                  >
+                    {l.toUpperCase()}
+                  </button>
+                ))}
+              </div>
               <div className={`px-3 py-1 rounded-full font-bold text-sm ${gameState === 'special' ? 'bg-yellow-50 text-yellow-600' : (isAuQuestion ? 'bg-blue-50 text-blue-600' : 'bg-red-50 text-red-600')}`}>
-                {gameState === 'special' ? 'Ziel erreicht!' : (isAuQuestion ? 'G\'day Doctor T!' : 'Doctor T\'s Tour')}
+                {gameState === 'special' ? t.goalReached : (isAuQuestion ? t.gday : t.tourTitle)}
               </div>
             </div>
           </div>
 
           <div className="space-y-4">
             <h2 className="text-2xl font-black text-gray-900 leading-tight">
-              {gameState === 'special' 
-                ? "Have you provided Doug yet with a date for the bike tour?"
-                : (gameState === 'moving_back' ? "Moment mal..." : currentQuestion.question)}
+              {getLocalizedQuestion()}
             </h2>
             
             <div className="flex flex-col gap-2">
-              {gameState === 'special' ? (
-                ["No, I forgot", "No, it's a very complex decision - I need more time", "No, Doug should pick a random date"].map((option, idx) => (
+              {gameState === 'moving_back' ? (
+                <div className="p-8 text-center bg-red-50 rounded-xl border-2 border-red-200 animate-pulse">
+                  <p className="text-red-600 font-bold">
+                    {t.wrongAnswerBack}
+                  </p>
+                </div>
+              ) : (
+                getLocalizedOptions().map((option: string, idx: number) => (
                   <button
                     key={idx}
-                    disabled={!!selectedOption}
-                    onClick={() => handleSpecialAnswer(idx)}
-                    className={`btn-option ${selectedOption === idx ? 'correct scale-102 border-yellow-500 bg-yellow-50 shadow-md' : ''}`}
+                    disabled={!!showFeedback}
+                    onClick={() => gameState === 'special' ? handleSpecialAnswer(idx) : handleAnswer(idx)}
+                    className={`btn-option ${
+                      selectedOption === idx 
+                        ? (showFeedback === 'correct' || showFeedback === 'bonus' || gameState === 'special' ? 'correct scale-102 border-green-500 bg-green-50 shadow-md' : 'incorrect scale-102 border-red-500 bg-red-50 shadow-md') 
+                        : (showFeedback && showFeedback !== 'correct' && showFeedback !== 'bonus' && idx === currentQuestion.answer ? 'correct border-green-500' : '')
+                    }`}
                   >
                     <div className="flex items-center gap-4">
-                      <span className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-sm font-bold text-gray-400">
+                      <span className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-sm font-bold text-gray-400 group-hover:border-red-600 group-hover:text-red-600">
                         {String.fromCharCode(65 + idx)}
                       </span>
                       <span className="flex-1 font-semibold text-gray-700 text-sm">{option}</span>
                     </div>
                   </button>
                 ))
-              ) : (
-                gameState === 'moving_back' ? (
-                  <div className="p-8 text-center bg-red-50 rounded-xl border-2 border-red-200 animate-pulse">
-                    <p className="text-red-600 font-bold">
-                      Falsche Antwort!<br />
-                      Du musst zurück zum Start und nochmals über das Datum nachdenken! 😂
-                    </p>
-                  </div>
-                ) : (
-                  currentQuestion.options.map((option, idx) => (
-                    <button
-                      key={idx}
-                      disabled={!!showFeedback}
-                      onClick={() => handleAnswer(idx)}
-                      className={`btn-option ${
-                        selectedOption === idx 
-                          ? (showFeedback === 'correct' || showFeedback === 'bonus' ? 'correct scale-102 border-green-500 bg-green-50 shadow-md' : 'incorrect scale-102 border-red-500 bg-red-50 shadow-md') 
-                          : (showFeedback && showFeedback !== 'correct' && showFeedback !== 'bonus' && idx === currentQuestion.answer ? 'correct border-green-500' : '')
-                      }`}
-                    >
-                      <div className="flex items-center gap-4">
-                        <span className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-sm font-bold text-gray-400 group-hover:border-red-600 group-hover:text-red-600">
-                          {String.fromCharCode(65 + idx)}
-                        </span>
-                        <span className="flex-1 font-semibold text-gray-700 text-sm">{option}</span>
-                      </div>
-                    </button>
-                  ))
-                )
               )}
             </div>
           </div>
@@ -460,7 +599,7 @@ const App: React.FC = () => {
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
                 <p className="text-white text-xs font-bold uppercase tracking-widest flex items-center gap-2">
                   <span className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span>
-                  Aktueller Standort: {routePoints[currentStageIdx].name}
+                  {t.currentLocation}: {routePoints[currentStageIdx].name}
                 </p>
               </div>
             </div>
@@ -470,11 +609,11 @@ const App: React.FC = () => {
         <div className="mt-6 pt-4 border-t border-gray-100">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-gray-400 uppercase font-bold tracking-widest">Fortschritt</p>
+              <p className="text-xs text-gray-400 uppercase font-bold tracking-widest">{t.progress}</p>
               <p className="text-sm font-black text-gray-900 uppercase">{routePoints[currentStageIdx].name}</p>
             </div>
             <div className="text-right">
-              <p className="text-xs text-gray-400 uppercase font-bold tracking-widest">Fragen</p>
+              <p className="text-xs text-gray-400 uppercase font-bold tracking-widest">{t.questions}</p>
               <p className="text-sm font-black text-red-600 uppercase">{attempts}</p>
             </div>
           </div>
@@ -550,7 +689,7 @@ const App: React.FC = () => {
                px-8 py-4 rounded-full shadow-2xl text-white font-black text-3xl animate-bounce flex items-center gap-4
                ${(showFeedback === 'correct' || showFeedback === 'bonus') ? 'bg-green-500' : (showFeedback === 'back' ? 'bg-orange-600' : 'bg-red-600')}
              `}>
-               {showFeedback === 'correct' ? 'Richtig! ✅' : (showFeedback === 'bonus' ? 'Crikey! +2 Felder! 🇦🇺🚀' : (showFeedback === 'back' ? 'Oje! Zurück... ↩️' : 'Hoppla! ❌'))}
+               {showFeedback === 'correct' ? t.correct : (showFeedback === 'bonus' ? t.bonus : (showFeedback === 'back' ? t.back : t.hoppla))}
              </div>
           </div>
         )}
