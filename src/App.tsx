@@ -218,10 +218,10 @@ const App: React.FC = () => {
     if (!isMuted) {
       if (!isAuQuestion) {
         if (isCorrect) {
-          const audio = new Audio('sounds/oh-yeah.mp3');
+          const audio = new Audio('sounds/SBB Chime.m4a');
           audio.play().catch(e => console.error("Audio play failed", e));
         } else {
-          const audio = new Audio('sounds/postbus.mp3');
+          const audio = new Audio('sounds/oh-yeah.mp3');
           audio.play().catch(e => console.error("Audio play failed", e));
         }
       } else {
@@ -231,9 +231,6 @@ const App: React.FC = () => {
         } else {
           const audio = new Audio('sounds/sorry-mate.mp3');
           audio.play().catch(e => console.error("Audio play failed", e));
-          // Play a second instance to "double" the volume
-          const audio2 = new Audio('sounds/sorry-mate.mp3');
-          setTimeout(() => audio2.play().catch(e => console.error("Audio play failed", e)), 20);
         }
       }
     }
