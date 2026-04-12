@@ -659,6 +659,14 @@ const App: React.FC = () => {
                 key={idx} 
                 position={[point.lat, point.lng]} 
                 icon={icon}
+                eventHandlers={{
+                  click: (e) => {
+                    if (e.originalEvent.shiftKey) {
+                      isMovingRef.current = true;
+                      setTargetStageIdx(idx);
+                    }
+                  },
+                }}
               >
                 <Popup>
                   <div className="text-center font-bold">
