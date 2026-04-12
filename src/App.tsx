@@ -662,8 +662,10 @@ const App: React.FC = () => {
                 eventHandlers={{
                   click: (e) => {
                     if (e.originalEvent.shiftKey) {
-                      isMovingRef.current = true;
+                      const newPathIdx = fullPathData.stageIndices[idx];
+                      setCurrentPathIdx(newPathIdx);
                       setTargetStageIdx(idx);
+                      setCurrentStageIdx(idx);
                     }
                   },
                 }}
