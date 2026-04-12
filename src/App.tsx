@@ -315,8 +315,8 @@ const App: React.FC = () => {
     const nextStagePathIdx = fullPathData.stageIndices[currentTargetStageIdx];
     const pointsInLeg = Math.abs(nextStagePathIdx - prevStagePathIdx);
     
-    const baseInterval = gameState === 'moving_back' ? 10 : 4000 / (pointsInLeg || 1);
-    const interval = Math.max(baseInterval, 5); // Don't go faster than 5ms per point
+    const baseInterval = gameState === 'moving_back' ? 1 : 4000 / (pointsInLeg || 1);
+    const interval = Math.max(baseInterval, 1); // Don't go faster than 1ms per point
 
     const timer = setTimeout(() => {
       setCurrentPathIdx(prev => prev + direction);
