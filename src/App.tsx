@@ -97,7 +97,8 @@ const uiTranslations: Record<Language, any> = {
     correct: "Richtig! ✅",
     bonus: "Crikey! +2 Felder! 🇦🇺🚀",
     back: "Oje! Zurück... ↩️",
-    hoppla: "Hoppla! ❌"
+    hoppla: "Hoppla! ❌",
+    onTheWay: "Unterwegs..."
   },
   fr: {
     startTitle: "Salut Doctor T !",
@@ -127,7 +128,8 @@ const uiTranslations: Record<Language, any> = {
     correct: "Correct ! ✅",
     bonus: "Crikey ! +2 cases ! 🇦🇺🚀",
     back: "Oups ! En arrière... ↩️",
-    hoppla: "Oups ! ❌"
+    hoppla: "Oups ! ❌",
+    onTheWay: "En route..."
   },
   it: {
     startTitle: "Ciao Doctor T!",
@@ -157,7 +159,8 @@ const uiTranslations: Record<Language, any> = {
     correct: "Esatto! ✅",
     bonus: "Crikey! +2 caselle! 🇦🇺🚀",
     back: "Ohi! Indietro... ↩️",
-    hoppla: "Hoppla! ❌"
+    hoppla: "Hoppla! ❌",
+    onTheWay: "In viaggio..."
   },
   rm: {
     startTitle: "Hoi Doctor T!",
@@ -187,7 +190,8 @@ const uiTranslations: Record<Language, any> = {
     correct: "Gist! ✅",
     bonus: "Crikey! +2 chomps! 🇦🇺🚀",
     back: "Ohi! Anavos... ↩️",
-    hoppla: "Hoppla! ❌"
+    hoppla: "Hoppla! ❌",
+    onTheWay: "En tura..."
   },
   en: {
     startTitle: "Hi Doctor T!",
@@ -217,7 +221,8 @@ const uiTranslations: Record<Language, any> = {
     correct: "Correct! ✅",
     bonus: "Crikey! +2 Fields! 🇦🇺🚀",
     back: "Oh no! Back... ↩️",
-    hoppla: "Oops! ❌"
+    hoppla: "Oops! ❌",
+    onTheWay: "On the way..."
   }
 };
 
@@ -327,9 +332,21 @@ const App: React.FC = () => {
   useEffect(() => {
     const targetPathIdx = fullPathData.stageIndices[targetStageIdx];
     if (currentPathIdx === targetPathIdx) {
+      const wasMoving = isMovingRef.current;
       isMovingRef.current = false;
       setCurrentStageIdx(targetStageIdx);
       
+      if (wasMoving && showFeedback) {
+        setTimeout(() => {
+          const answeredAu = (attempts > 0 && (attempts + 1) % 4 === 0);
+          setShowFeedback(null);
+          setSelectedOption(null);
+          if (answeredAu) setAuIdx(i => i + 1);
+          else setSwissIdx(i => i + 1);
+          setAttempts(a => a + 1);
+        }, 1000);
+      }
+
       if (targetStageIdx === routePoints.length - 1 && gameState === 'playing') {
         setGameState('special');
       }
@@ -371,11 +388,10 @@ const App: React.FC = () => {
   const polylinePoints = fullPathData.fullPath as [number, number][];
 
   const handleAnswer = (optionIdx: number) => {
-    if (showFeedback || gameState !== 'playing' || isMovingRef.current) return;
+    if (showFeedback || gameState !== 'playing' || currentPathIdx !== fullPathData.stageIndices[targetStageIdx]) return;
     
     setSelectedOption(optionIdx);
     const isCorrect = optionIdx === currentQuestion.answer;
-    setAttempts(a => a + 1);
     
     // Sound Effects Logic
     if (!isMuted) {
@@ -426,18 +442,18 @@ const App: React.FC = () => {
     } else if (nextFeedback === 'back') {
       isMovingRef.current = true;
       setTargetStageIdx(prev => Math.max(prev - 1, 0));
+    } else {
+      // Wrong answer, stay put. 
+      // Delay clearing feedback and transitioning.
+      const answeredAu = isAuQuestion;
+      setTimeout(() => {
+        setShowFeedback(null);
+        setSelectedOption(null);
+        if (answeredAu) setAuIdx(i => i + 1);
+        else setSwissIdx(i => i + 1);
+        setAttempts(a => a + 1);
+      }, 4000); // 4 seconds of feedback
     }
-
-    setTimeout(() => {
-      setShowFeedback(null);
-      setSelectedOption(null);
-      
-      if (isAuQuestion) {
-        setAuIdx(i => i + 1);
-      } else {
-        setSwissIdx(i => i + 1);
-      }
-    }, 1500);
   };
 
   const handleSpecialAnswer = (idx: number) => {
@@ -589,39 +605,55 @@ const App: React.FC = () => {
           </div>
 
           <div className="space-y-4">
-            <h2 className="text-2xl font-black text-gray-900 leading-tight">
-              {getLocalizedQuestion()}
-            </h2>
-            
-            <div className="flex flex-col gap-2">
-              {gameState === 'moving_back' ? (
-                <div className="p-8 text-center bg-red-50 rounded-xl border-2 border-red-200 animate-pulse">
-                  <p className="text-red-600 font-bold">
-                    {t.wrongAnswerBack}
+            {currentPathIdx === fullPathData.stageIndices[targetStageIdx] || !!showFeedback || gameState === 'special' || gameState === 'moving_back' ? (
+              <>
+                <h2 className="text-2xl font-black text-gray-900 leading-tight">
+                  {getLocalizedQuestion()}
+                </h2>
+                
+                <div className="flex flex-col gap-2">
+                  {gameState === 'moving_back' ? (
+                    <div className="p-8 text-center bg-red-50 rounded-xl border-2 border-red-200 animate-pulse">
+                      <p className="text-red-600 font-bold">
+                        {t.wrongAnswerBack}
+                      </p>
+                    </div>
+                  ) : (
+                    getLocalizedOptions().map((option: string, idx: number) => (
+                      <button
+                        key={idx}
+                        disabled={!!showFeedback}
+                        onClick={() => gameState === 'special' ? handleSpecialAnswer(idx) : handleAnswer(idx)}
+                        className={`btn-option ${
+                          selectedOption === idx 
+                            ? (showFeedback === 'correct' || showFeedback === 'bonus' || gameState === 'special' ? 'correct scale-102 border-green-500 bg-green-50 shadow-md' : 'incorrect scale-102 border-red-500 bg-red-50 shadow-md') 
+                            : (showFeedback && showFeedback !== 'correct' && showFeedback !== 'bonus' && idx === currentQuestion.answer ? 'correct border-green-500' : '')
+                        }`}
+                      >
+                        <div className="flex items-center gap-4">
+                          <span className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-sm font-bold text-gray-400 group-hover:border-red-600 group-hover:text-red-600">
+                            {String.fromCharCode(65 + idx)}
+                          </span>
+                          <span className="flex-1 font-semibold text-gray-700 text-sm">{option}</span>
+                        </div>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center p-12 space-y-6 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200 animate-pulse">
+                <Bike className="w-16 h-16 text-red-600 animate-bounce" />
+                <div className="text-center">
+                  <p className="text-xl font-black text-gray-900 uppercase tracking-wider">
+                    {t.onTheWay}
+                  </p>
+                  <p className="text-sm text-gray-400 font-bold uppercase mt-2">
+                    {routePoints[targetStageIdx].name}
                   </p>
                 </div>
-              ) : (
-                getLocalizedOptions().map((option: string, idx: number) => (
-                  <button
-                    key={idx}
-                    disabled={!!showFeedback}
-                    onClick={() => gameState === 'special' ? handleSpecialAnswer(idx) : handleAnswer(idx)}
-                    className={`btn-option ${
-                      selectedOption === idx 
-                        ? (showFeedback === 'correct' || showFeedback === 'bonus' || gameState === 'special' ? 'correct scale-102 border-green-500 bg-green-50 shadow-md' : 'incorrect scale-102 border-red-500 bg-red-50 shadow-md') 
-                        : (showFeedback && showFeedback !== 'correct' && showFeedback !== 'bonus' && idx === currentQuestion.answer ? 'correct border-green-500' : '')
-                    }`}
-                  >
-                    <div className="flex items-center gap-4">
-                      <span className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-sm font-bold text-gray-400 group-hover:border-red-600 group-hover:text-red-600">
-                        {String.fromCharCode(65 + idx)}
-                      </span>
-                      <span className="flex-1 font-semibold text-gray-700 text-sm">{option}</span>
-                    </div>
-                  </button>
-                ))
-              )}
-            </div>
+              </div>
+            )}
           </div>
           
           {/* Location Image */}
