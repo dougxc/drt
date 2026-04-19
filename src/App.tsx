@@ -407,6 +407,8 @@ const App: React.FC = () => {
         if (isCorrect) {
           const audio = new Audio('sounds/good-boy.mp3');
           audio.play().catch(e => console.error("Audio play failed", e));
+          const auAudio = new Audio('sounds/down-under.mp3');
+          auAudio.play().catch(e => console.error("Audio play failed", e));
         } else {
           const audio = new Audio('sounds/sorry-mate.mp3');
           audio.play().catch(e => console.error("Audio play failed", e));
